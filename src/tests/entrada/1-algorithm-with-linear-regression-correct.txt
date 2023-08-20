@@ -1,26 +1,26 @@
-pipeline MyMLPipeline;
+pipeline "MyMLPipeline":
 
-data:
-   source: "https://link_para_o_seu_dataset.com"
+   data:
+      source: "https://link_para_o_seu_dataset.com"
 
-preprocessing: 
-       - removeColumn("columnName")
-       - normalize("anotherColumnName")
-       - split(0.8)
+   preprocessing: 
+      - removeColumn: "columnName"
+      - normalize: "anotherColumnName"
+      - split: 0.8
 
-model:
-   algorithm: LinearRegression
-   parameters:
-       - learning_rate: 0.01
-       - epochs: 100
+   model:
+      algorithm: LinearRegression
+      parameters:
+         - learning_rate: 0.01
+         - epochs: 100
 
-evaluation:
-   metric: MSE
+   evaluation:
+      metric: MSE
 
-deployment:
-   type: plot
-   fields:
-       - x: "feature1"
-       - y: "predicted_value"
+   deployment:
+      type: plot
+      fields:
+         - x: "feature1"
+         - y: "predicted_value"
 
 generate Jupyter

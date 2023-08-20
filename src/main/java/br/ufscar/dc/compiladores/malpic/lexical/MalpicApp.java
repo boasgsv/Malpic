@@ -25,7 +25,10 @@ public class MalpicApp
             Token t = null;
             while((t = lex.nextToken()).getType() != Token.EOF) {
                 String displayName = MalpicLexer.VOCABULARY.getDisplayName(t.getType());
-                writer.write("<'" + t.getText() + "','" + displayName + "'>\n");
+                if (displayName.equals("PALAVRAS_CHAVES"))
+                    writer.write("<'" + t.getText() + "'," + t.getText() + ">\n");
+                else
+                    writer.write("<'" + t.getText() + "','" + displayName + "'>\n");
             }
 
             writer.close();
