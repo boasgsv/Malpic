@@ -25,10 +25,18 @@ public class MalpicApp
             Token t = null;
             while((t = lex.nextToken()).getType() != Token.EOF) {
                 String displayName = MalpicLexer.VOCABULARY.getDisplayName(t.getType());
-                if (displayName.equals("PALAVRAS_CHAVES"))
-                    writer.write("<'" + t.getText() + "'," + t.getText() + ">\n");
-                else
-                    writer.write("<'" + t.getText() + "','" + displayName + "'>\n");
+                if (displayName.equals("COMMENTS_NOT_CLOSED")){
+                    writer.write("Linha " + t.getLine() + ": " + t.getText() + " - comentario nao fechado\n");
+                    break;
+                }
+                else if (displayName.equals("STRING_NOT_CLOSED")){
+                    writer.write("Linha " + t.getLine() + ": " + t.getText() + " - cadeia nao fechada\n");
+                    break;
+                }
+                else if (displayName.equals("ERROR")){
+                    writer.write("Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado\n");
+                    break;
+                }
             }
 
             writer.close();
