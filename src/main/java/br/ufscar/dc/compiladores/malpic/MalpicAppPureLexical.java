@@ -1,4 +1,7 @@
-package br.ufscar.dc.compiladores.malpic.lexical;
+
+
+
+package br.ufscar.dc.compiladores.malpic;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +15,7 @@ import org.antlr.v4.runtime.Token;
  * Hello world!
  *
  */
-public class MalpicApp
+public class MalpicAppPureLexical
 {
     public static void main( String[] args )
     {
@@ -37,11 +40,14 @@ public class MalpicApp
                     writer.write("Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado\n");
                     break;
                 }
+                else { // no error
+                    writer.write("<'" + t.getText() + "','" + displayName + "'>\n");
+                }
             }
 
             writer.close();
         } catch(IOException ex) {
-            System.out.println(ex.getMessage());
+            System.out.println("Exception: " + ex.getMessage());
         }
     }
 }

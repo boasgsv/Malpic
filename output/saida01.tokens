@@ -1,0 +1,181 @@
+<';','';''>
+<'Pipeline ',''Pipeline ''>
+<'"MyMLPipeline"','VALUE'>
+<';','';''>
+<'
+','NEWLINE'>
+<'
+','NEWLINE'>
+<'
+','NEWLINE'>
+<'data','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'name','KEY'>
+<':','':''>
+<' ','WS'>
+<'"D-1"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'label','KEY'>
+<':','':''>
+<' ','WS'>
+<'"labelColumnName"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'acquisition','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'source','KEY'>
+<':','':''>
+<' ','WS'>
+<'"https://link_para_o_seu_dataset.com"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'preprocessing','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'removals','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'      ','WS'>
+<'-',''-''>
+<' ','WS'>
+<'"columnName"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'split','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'train','KEY'>
+<':','':''>
+<' ','WS'>
+<'0.8','NUM_REAL'>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'test','KEY'>
+<':','':''>
+<' ','WS'>
+<'0.2','NUM_REAL'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'visualization','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'-',''-''>
+<' ','WS'>
+<'Histogram','VALUE'>
+<'
+','NEWLINE'>
+<'
+','NEWLINE'>
+<'model','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'name','KEY'>
+<':','':''>
+<' ','WS'>
+<'"LR-1"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'algorithm','KEY'>
+<':','':''>
+<' ','WS'>
+<'Linear Regression','VALUE'>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'parameters','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'      ','WS'>
+<'fit_intercept','KEY'>
+<':','':''>
+<' ','WS'>
+<'True','VALUE'>
+<'
+','NEWLINE'>
+<'      ','WS'>
+<'normalize','KEY'>
+<':','':''>
+<' ','WS'>
+<'False','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'train','KEY'>
+<':','':''>
+<' ','WS'>
+<'"D-1"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'test','KEY'>
+<':','':''>
+<' ','WS'>
+<'"D-1"','VALUE'>
+<'
+','NEWLINE'>
+<'
+','NEWLINE'>
+<'evaluation','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'name','KEY'>
+<':','':''>
+<' ','WS'>
+<'"EV-1"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'reference','KEY'>
+<':','':''>
+<' ','WS'>
+<'"LR-1"','VALUE'>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'metrics','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'    ','WS'>
+<'-',''-''>
+<' ','WS'>
+<'MSE','VALUE'>
+<'
+','NEWLINE'>
+<'
+','NEWLINE'>
+<'deployment','KEY'>
+<':','':''>
+<'
+','NEWLINE'>
+<'  ','WS'>
+<'type',''type''>
+<':','':''>
+<' ','WS'>
+<'Local','VALUE'>
