@@ -1,0 +1,36 @@
+Pipeline "MyMLPipeline";
+
+// origem do dataset
+data:
+  name: "D-1"
+  test: "D"
+  label: "labelColumnName"
+  acquisition:
+    source: "https://link_para_o_seu_dataset.com"
+  preprocessing:
+    removals:
+      - "columnName"
+  split:
+    train: 0.8
+    test: 0.2
+  visualization:
+    - Histogram
+
+model:
+  name: "LR-1"
+  algorithm: Linear Regression
+    parameters:
+      fit_intercept: True
+      normalize: False
+  train: "D-1"
+  test: "D-1"
+
+evaluation:
+  name: "EV-1"
+  reference: "LR-1"
+  metrics:
+    - MSE
+
+deployment:
+  type: Local
+  test: "B"
