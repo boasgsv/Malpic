@@ -42,32 +42,6 @@ KEY: ': ' NEWLINE;
 
 
 
-GLOBAL_KEY: 'data' | 'model' | 'evaluation' | 'deployment';
-
-DATA_KEY: 'name' | 'label' | 'acquisition' | 'preprocessing'
-            | 'split' | 'visualization';
-
-DATA_ACQUISITION_KEY: 'source';
-
-DATA_PREPROCESSING_KEY: 'removals';
-
-DATA_SPLIT_KEY: 'train' | 'test';
-
-MODEL_KEY: 'name' | 'algorithm' | 'train' | 'test';
-
-MODEL_ALGORITHM_KEY: 'parameters';
-
-
-MODEL_ALGORITHM_PARAMETER_KEY: LINEAR_REGRESSION_PARAMETER;
-
-LINEAR_REGRESSION_PARAMETER: 'fit_intercept' | 'normalize';
-
-EVALUATION_KEY: 'name' | 'reference' | 'metrics';
-
-DEPLOYMENT_KEY: 'type';
-
-
-
 
 
 
