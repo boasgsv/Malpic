@@ -38,9 +38,6 @@ public class MalpicApp
                     writer.write("Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado\n");
                     break;
                 }
-                else { // no error
-                    writer.write("<'" + t.getText() + "','" + displayName + "'>\n");
-                }
             }
 
             writer.close();
