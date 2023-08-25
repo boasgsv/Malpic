@@ -1,4 +1,4 @@
-package br.ufscar.dc.compiladores.malpic.lexical;
+package br.ufscar.dc.compiladores.malpic;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
+
 
 /**
  * Hello world!
