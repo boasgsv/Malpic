@@ -1,0 +1,19 @@
+pipeline "MyMLPipeline":
+
+   / origem do dataset /
+   data "https://link_para_o_seu_dataset.com"
+   
+   preprocess
+      remove= "columnName"
+      normalize "anotherColumnName"
+      split 0.8
+
+   model LinearRegression
+      rate 0.01
+      epoch 100
+
+   evaluate MSE
+
+   deploy plot
+      x "feature1"
+      y "predicted_value"
