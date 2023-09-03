@@ -2,9 +2,10 @@ package br.ufscar.dc.compiladores.malpic;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
-import br.ufscar.dc.compiladores.malpic.listeners.MyCustomErrorListener;
+import br.ufscar.dc.compiladores.malpic.analysis.listeners.MyCustomErrorListener;
+//import br.ufscar.dc.compiladores.malpic.visitors.analysis.MalpicSemanticAnalyzer;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.visitors.MalpicIpynbGenerator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -27,14 +28,26 @@ public class MalpicApp
 
             String filename = args[1];
             FileWriter writer = new FileWriter(filename);
+            tokens.fill();
+            for (Token token : tokens.getTokens()) {
+                String displayName = MalpicLexer.VOCABULARY.getDisplayName(token.getType());
+                System.out.println("< " +  displayName + ", " + token.toString() + ">");
+            }
 
             //Configuração do erro customizado
             MyCustomErrorListener mcel = new MyCustomErrorListener(writer);
             parser.removeErrorListeners();
             parser.addErrorListener(mcel);
 
-            parser.program();
+            MalpicParser.ProgramContext arvore = parser.program();
+//            MalpicSemanticAnalyzer visitor = new MalpicSemanticAnalyzer();
+//            String out = visitor.visitProgram(arvore);
 
+            MalpicIpynbGenerator generator = new MalpicIpynbGenerator();
+            String ipynb = generator.visitProgram(arvore);
+            FileWriter ipynbWriter = new FileWriter("output.ipynb");
+            ipynbWriter.write(ipynb);
+            ipynbWriter.close();
             writer.close();
         } catch(IOException ex) {
             System.out.println("Exception: " + ex.getMessage());

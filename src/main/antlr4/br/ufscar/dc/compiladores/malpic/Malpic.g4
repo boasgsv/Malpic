@@ -1,41 +1,69 @@
 grammar Malpic;
 
-WS: ( ' ' | '\t' | 'r' | '\n' ) {skip();};
-STEP_ID: [A-Z] [a-zA-Z0-9]*;
-IDENTIFIER: [a-z] [a-zA-Z0-9]*;
+WS: ( ' ' | '\t' | '\r' | '\n' ) -> skip;
+REMAINING: 'remaining';
+UPPERCASE_IDENTIFIER: [A-Z] [a-zA-Z0-9]*;
+LOWERCASE_IDENTIFIER: [a-z] [a-zA-Z0-9]*;
 STRING: '"' ~('\n'|'"')* '"';
 STRING_NOT_CLOSED: '"' ~('\n'|'"')* '\n';
 COLON: ':';
 SEMICOLON: ';';
 COMMENTS: '//' ~('\n' | '/')* { skip(); };
-COMMENTS_NOT_CLOSED: '/' ~('\n'|'/')* '\n';
 NUM_INT: ('0'..'9')+;
 NUM_REAL: ('0'..'9')+ ('.' ('0'..'9')+)?;
-KEYWORD:
-    'pipeline' |
-    'data';
-ERROR: .;
 
-train: 'train';
-test: 'test';
-split: 'split' COLON train COLON NUM_REAL test COLON NUM_REAL;
-histogram: 'histogram';
-correlation_matrix: 'correlation';
-plot: histogram | correlation_matrix;
+program: pipeline EOF;
+pipeline: 'pipeline' UPPERCASE_IDENTIFIER SEMICOLON dataset;
+dataset:
+    'dataset' UPPERCASE_IDENTIFIER STRING COLON
+        source
+        (preprocess |
+            visualize |
+                split)*;
+
+source:
+    'from' STRING 'with'
+        sourceTarget
+        sourceFeatures;
+sourceTarget: 'target' ('as' variable)? '=' STRING;
+sourceFeatures: 'features' ('as' variable)? '=' REMAINING;
+
+preprocess: 'preprocess' variable
+                preprocessCommand ('->'
+                    preprocessCommand)*;
+preprocessCommand:
+    ('remove' |
+    'normalize' |
+    'one_hot_encode')
+    '(' STRING (', ' STRING)* ')';
+
+
+visualize: 'visualize' variable plotset | plot;
 plotset: '{' plot (',' plot)* '}';
-visualize: 'visualize' plotset | plot;
+plot: 'histogram' | 'correlation';
+
+split: 'split' variable 'as' variable (splitPartitions | 'using' splitStrategy);
+splitPartitions:
+    variable '=' NUM_REAL (',' variable '=' NUM_REAL)+;
+splitStrategy:
+    'holdout' '(' NUM_REAL ')';
+
+variable: (LOWERCASE_IDENTIFIER | UPPERCASE_IDENTIFIER)
+            ('.' (LOWERCASE_IDENTIFIER | UPPERCASE_IDENTIFIER))*;
+
+
+
+/*
+
+holdoutTest: NUM_REAL 'as test';
+holdoutTrain: NUM_REAL 'as train';
+holdout: 'holdout' holdoutTrain ', ' holdoutTest;
+splitTarget: IDENTIFIER;
 remove_cmd: 'remove' '(' STRING (', ' STRING)* ')';
 normalize_cmd: 'normalize' '(' STRING (', ' STRING)* ')';
-preprocess_cmds: remove_cmd | normalize_cmd;
-preprocess: 'preprocess' preprocess_cmds ('->' preprocess_cmds)*;
-source: 'source' '=' STRING;
-dataset:
-    'dataset' STEP_ID STRING COLON
-        source
-        preprocess
-        visualize
-        split;
-pipeline: 'pipeline' STRING SEMICOLON;
-program: pipeline dataset;
 
+
+
+model: 'model' STEP_ID STRING;
+*/
 

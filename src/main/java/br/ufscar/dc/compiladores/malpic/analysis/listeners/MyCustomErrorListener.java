@@ -1,4 +1,4 @@
-package br.ufscar.dc.compiladores.malpic.listeners;
+package br.ufscar.dc.compiladores.malpic.analysis.listeners;
 
 import br.ufscar.dc.compiladores.malpic.MalpicLexer;
 import org.antlr.v4.runtime.ANTLRErrorListener;

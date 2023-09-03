@@ -1,13 +1,24 @@
-pipeline "MyMLPipeline";
+pipeline PetalsWithLRPipeline;
 
 // origem do dataset
-dataset Petals1 "Petals Dataset":
-  source = "path"
-  preprocess
-    remove("columnName")
-    -> normalize("columnName")
-  visualize {
+dataset PetalsBase "Petals Dataset":
+  from "path" with
+    target as y = "targetColumnName"
+    features as X = remaining
+  preprocess all
+    remove("column1Name")
+    -> one_hot_encode("column2Name")
+  visualize all {
     histogram,
     correlation
   }
-  split all as f1, f2, f3, f4 0.1, 0.2, 0.6, 0.1
+  split all as h1
+    train = 0.7,
+    test = 0.2
+  preprocess h1.train
+    normalize("column2Name")
+  preprocess h1.test
+    normalize("column2Name")
+
+
+
