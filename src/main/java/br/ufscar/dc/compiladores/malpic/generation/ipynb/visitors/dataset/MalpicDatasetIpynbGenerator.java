@@ -1,12 +1,15 @@
 package br.ufscar.dc.compiladores.malpic.generation.ipynb.visitors.dataset;
 
 import br.ufscar.dc.compiladores.malpic.MalpicParser;
-import br.ufscar.dc.compiladores.malpic.generation.ipynb.elements.notebook.cells.code.statements.MalpicPythonAssignmentStatement;
-import br.ufscar.dc.compiladores.malpic.generation.ipynb.elements.notebook.cells.code.statements.MalpicPythonStatement;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.snippets.MalpicIpynbSnippetPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.snippets.commands.AbstractMalpicIpynbCommandPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.statements.MalpicIpynbStatementPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.statements.assignment.MalpicIpynbAssignmentStatementPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.statements.atomic.MalpicIpynbAtomicStatementPresenter;
 import br.ufscar.dc.compiladores.malpic.generation.ipynb.visitors.AbstractMalpicIpynbGenerator;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.List;
+import java.util.*;
 
 public class MalpicDatasetIpynbGenerator extends AbstractMalpicIpynbGenerator {
 
@@ -19,19 +22,14 @@ public class MalpicDatasetIpynbGenerator extends AbstractMalpicIpynbGenerator {
         this.visitSource(ctx.source());
         List<MalpicParser.PreprocessContext> preprocesses = ctx.preprocess();
         for (MalpicParser.PreprocessContext preprocess: preprocesses) {
-            this.visitPreprocess(preprocess);
+//             this.visitPreprocess(preprocess);
         }
         return "";
     }
 
     @Override
     public String visitPreprocess(MalpicParser.PreprocessContext ctx) {
-        MalpicParser.VariableContext preprocessTarget = ctx.variable();
-        String preprocessTargetString = preprocessTarget == null ?
-                "all" :
-                preprocessTarget.getText();
 
-        System.out.println(preprocessTargetString);
         List<MalpicParser.PreprocessCommandContext> preprocessCommandChain = ctx.preprocessCommand();
         for (MalpicParser.PreprocessCommandContext preprocessCommand: preprocessCommandChain) {
             this.visitPreprocessCommand(preprocessCommand);
@@ -42,43 +40,94 @@ public class MalpicDatasetIpynbGenerator extends AbstractMalpicIpynbGenerator {
 
     @Override
     public String visitPreprocessCommand(MalpicParser.PreprocessCommandContext ctx) {
-        String commandName = ctx.getChild(0).getText();
+        MalpicParser.PreprocessContext parent = (MalpicParser.PreprocessContext) ctx.getParent();
+        if (parent == null)
+            throw new RuntimeException(
+                    "Generator Error: preprocess command " +
+                    "requires reference to parent.\n");
+
+        MalpicParser.VariableContext preprocessTarget = parent.variable();
+        String preprocessTargetStr = preprocessTarget == null ?
+                ipynbVariablesTable.getDatasetAlias() :
+                ipynbVariablesTable.get(preprocessTarget.getText());
+
+
+        String commandStr = ctx.getChild(0).getText();
+        AbstractMalpicIpynbCommandPresenter command;
+        command = ipynbCommandsTable.get(commandStr);
+
+        List<TerminalNode> rawArgs = ctx.STRING();
+        List<String> args = new ArrayList<>();
+        args.add(preprocessTargetStr);
+        args.add(preprocessTargetStr);
+        for (TerminalNode rawArg: rawArgs) {
+            args.add(rawArg.getText());
+        }
+
+        command.parseAndRun(args);
+        int cellIndex = ipynbBuilder.nextCodeCell();
+        //ipynbBuilder.appendIpynbSnippetToCell(command, cellIndex);
         return "";
     }
 
     @Override
     public String visitSource(MalpicParser.SourceContext ctx) {
-        // Dataframe Definition Statement
+
+        // Dataset Definition Snippet
         String sourceString = ctx.STRING().getText();
-        int cellIndex = ipynbBuilder.nextCodeCell();
-        String pdReadCsv = "pd.read_csv(" + sourceString + ")";
-        MalpicPythonAssignmentStatement stmt1 =
-                new MalpicPythonAssignmentStatement("df", pdReadCsv);
+        String datasetAlias = ipynbVariablesTable.getDatasetAlias();
+
+        MalpicIpynbSnippetPresenter datasetSnippet = ipynbCommandsTable.getReadCsvCallSnippet(
+                datasetAlias,
+                sourceString);
+
+        MalpicIpynbAtomicStatementPresenter datasetDisplayStmt =
+                new MalpicIpynbAtomicStatementPresenter(datasetAlias);
+        datasetSnippet.addStatement(datasetDisplayStmt);
+        int datasetCellIndex = ipynbBuilder.nextCodeCell();
+        //
 
         // Target Definition Statement
         MalpicParser.SourceTargetContext sourceTarget = ctx.sourceTarget();
+        String labelColumnName = sourceTarget.STRING().getText();
         String targetAlias = sourceTarget.variable().getText();
-        String label = sourceTarget.STRING().getText();
-        MalpicPythonStatement stmt2 = new MalpicPythonAssignmentStatement(
-                targetAlias,
-                "df[" + label + "]");
+        ipynbVariablesTable.setTargetAlias(targetAlias);
+
+        MalpicIpynbStatementPresenter targetInitStmt =
+                new MalpicIpynbAssignmentStatementPresenter(
+                        targetAlias,
+                        datasetAlias + "[" + labelColumnName + "]");
+        MalpicIpynbAtomicStatementPresenter targetDisplayStmt =
+                new MalpicIpynbAtomicStatementPresenter(targetAlias);
+        MalpicIpynbSnippetPresenter targetSnippet =
+                new MalpicIpynbSnippetPresenter(
+                        Arrays.asList(targetInitStmt, targetDisplayStmt)
+                );
+        int targetCellIndex = ipynbBuilder.nextCodeCell();
+        //
 
         // Feature Definition Statement
         MalpicParser.SourceFeaturesContext sourceFeatures = ctx.sourceFeatures();
-        String featuresAlias = sourceFeatures.variable().getText();
         TerminalNode featuresRemaining = sourceFeatures.REMAINING();
-        if (featuresRemaining == null) {
-            throw new RuntimeException("Generator Error: Unimplemented\n");
-        }
+        String featuresAlias = sourceFeatures.variable().getText();
+        ipynbVariablesTable.setFeaturesAlias(featuresAlias);
 
 
-        MalpicPythonStatement stmt3 = new MalpicPythonAssignmentStatement(
-                featuresAlias,
-                "df.drop(" + label + ", axis=1)");
+        MalpicIpynbAtomicStatementPresenter featuresDisplayStmt =
+                new MalpicIpynbAtomicStatementPresenter(featuresAlias);
 
-        ipynbBuilder.appendPythonStatementToCell(stmt1, cellIndex);
-        ipynbBuilder.appendPythonStatementToCell(stmt2, cellIndex);
-        ipynbBuilder.appendPythonStatementToCell(stmt3, cellIndex);
+        MalpicIpynbSnippetPresenter featuresSnippet =
+                ipynbCommandsTable.getRemoveColumnCmdCallSnippet(
+                        featuresAlias,
+                        datasetAlias,
+                        labelColumnName);
+        featuresSnippet.addStatement(featuresDisplayStmt);
+        int featuresCellIndex = ipynbBuilder.nextCodeCell();
+
+        // Build Ipynb
+        ipynbBuilder.appendIpynbSnippetToCell(datasetSnippet, datasetCellIndex);
+        ipynbBuilder.appendIpynbSnippetToCell(targetSnippet, targetCellIndex);
+        ipynbBuilder.appendIpynbSnippetToCell(featuresSnippet, featuresCellIndex);
         return "";
     }
 }

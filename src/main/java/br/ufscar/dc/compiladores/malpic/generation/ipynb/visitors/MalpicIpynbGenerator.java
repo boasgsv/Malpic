@@ -1,9 +1,13 @@
 package br.ufscar.dc.compiladores.malpic.generation.ipynb.visitors;
 
 import br.ufscar.dc.compiladores.malpic.MalpicParser;
-import br.ufscar.dc.compiladores.malpic.generation.ipynb.elements.notebook.cells.code.statements.MalpicPythonLibraryImportStatement;
-import br.ufscar.dc.compiladores.malpic.generation.ipynb.struct.MalpicIpynbImportsTable;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.snippets.MalpicIpynbSnippetPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.statements.MalpicIpynbStatementPresenter;
+import br.ufscar.dc.compiladores.malpic.generation.ipynb.presentation.notebook.cells.code.statements.libraryimport.MalpicIpynbLibraryImportStatementPresenter;
 import br.ufscar.dc.compiladores.malpic.generation.ipynb.visitors.dataset.MalpicDatasetIpynbGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MalpicIpynbGenerator extends AbstractMalpicIpynbGenerator {
     MalpicDatasetIpynbGenerator datasetIpynbGenerator;
@@ -20,19 +24,26 @@ public class MalpicIpynbGenerator extends AbstractMalpicIpynbGenerator {
 
     @Override
     public String visitPipeline(MalpicParser.PipelineContext ctx) {
-        MalpicIpynbImportsTable importsTable = super.ipynbGenerationAtlas.getImportsTable();
+        List<MalpicIpynbStatementPresenter> stmtList = new ArrayList<>();
+        MalpicIpynbLibraryImportStatementPresenter numpyImportStmt =
+                new MalpicIpynbLibraryImportStatementPresenter(
+                        "numpy",
+                        "np");
+
+        MalpicIpynbLibraryImportStatementPresenter pandasImport =
+                new MalpicIpynbLibraryImportStatementPresenter("pandas", "pd");
+
+        if (ipynbImportsTable.putIfAbsent(numpyImportStmt.getId(), numpyImportStmt) == null)
+            stmtList.add(numpyImportStmt);
+
+        if (ipynbImportsTable.putIfAbsent(pandasImport.getId(), pandasImport) == null)
+            stmtList.add(pandasImport);
+
+        MalpicIpynbSnippetPresenter pipelineImportSnippet =
+                new MalpicIpynbSnippetPresenter(stmtList);
+
         int cellIndex = ipynbBuilder.nextCodeCell();
-
-        MalpicPythonLibraryImportStatement numpyImport =
-                new MalpicPythonLibraryImportStatement("numpy", "np");
-        if (importsTable.putIfAbsent(numpyImport.getId(), numpyImport) == null)
-            ipynbBuilder.appendPythonStatementToCell(numpyImport, cellIndex);
-
-        MalpicPythonLibraryImportStatement pandasImport =
-                new MalpicPythonLibraryImportStatement("pandas", "pd");
-        if (importsTable.putIfAbsent(pandasImport.getId(), pandasImport) == null)
-            ipynbBuilder.appendPythonStatementToCell(pandasImport, cellIndex);
-
+        ipynbBuilder.appendIpynbSnippetToCell(pipelineImportSnippet, cellIndex);
         datasetIpynbGenerator.visitDataset(ctx.dataset());
         return "";
 

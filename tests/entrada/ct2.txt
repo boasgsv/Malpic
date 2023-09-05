@@ -1,0 +1,39 @@
+pipeline PetalsWithLRPipeline;
+
+// origem do dataset
+dataset PetalsBase "Petals Dataset":
+  from "path" with
+    target as y = "targetColumnName"
+    features as X = remaining
+  preprocess
+    remove_column("column1Name")
+    -> one_hot_encode("column2Name")
+
+  visualize all {
+    histogram,
+    correlation
+  }
+  split all as h1
+    train = 0.7,
+    test = 0.3
+
+model *LinearRegressor1 "Simple Linear Regression":
+  algorithm = "linear_regression"
+  parameters {
+    learning_rate = 0.01,
+    epochs = 100
+  }
+  train on h1.train
+  evaluate on h1.test using {
+    metrics = "mae", "mse", "r2"
+    visualize {
+      residuals_plot,
+      prediction_vs_actual,
+      feature_importance
+    }
+  }
+
+deployment D1 "Local":
+    type = "local"
+
+
