@@ -54,11 +54,11 @@ Exemplos com códigos completos podem ser encontrados no diretório `tests`
 
 Por padrão, as saídas encontram-se no diretório de [output](saídas). Lá você encontra tanto as saídas para [analisador léxico](output/lexical.out), [analisador sintático](output/syntactical.out) e [analisador semântico](output/semantical.out). 
 
-Também lá você encontrará [output/output.ipynb](o código gerado )
+Também lá você encontrará [o código gerado](output/output.ipynb)
 
 ## Compilar e rodar com o script de teste
 
-Criamos um script de teste para rodar os testes presentes no [tests/entrada](diretório de testes). 
+Criamos um script de teste para rodar os testes presentes no [diretório de testes](tests/entrada). 
 
 Para utilizá-lo, basta rodar
 
