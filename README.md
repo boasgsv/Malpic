@@ -8,6 +8,10 @@
 
 # Linguagem de Pipeline para Machine Learning
 
+## Video de apresentação
+
+[Link para YouTube](https://www.youtube.com/watch?v=L_M4Tjrosr0)
+
 ## Propósito
 
 A linguagem consiste em algo semalhante a um arquivo ```.yaml``` onde definimos etapas para treinamento de dataframe com técnicas de machine learning. O objetivo principal é simplificar esse workflow, fornecendo uma linguagem que converte todas as etapas para um código em python para o jupyter com poucas linhas.
