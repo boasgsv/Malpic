@@ -52,7 +52,7 @@ Exemplos com códigos completos podem ser encontrados no diretório `tests`
 
 ## Saídas
 
-Por padrão, as saídas encontram-se no diretório de [output](saídas). Lá você encontra tanto as saídas para [output/lexical.out](analisador léxico), [output/syntactical.out](analisador sintático) e [output/semantical.out](analisador semântico). 
+Por padrão, as saídas encontram-se no diretório de [output](saídas). Lá você encontra tanto as saídas para [analisador léxico](output/lexical.out), [analisador sintático](output/syntactical.out) e [analisador semântico](output/semantical.out). 
 
 Também lá você encontrará [output/output.ipynb](o código gerado )
 
