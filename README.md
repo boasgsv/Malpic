@@ -20,15 +20,26 @@ A linguagem consiste em algo semalhante a um arquivo ```.yaml``` onde definimos 
 ```
 pipeline "MyMLPipeline":
 
-   data "https://link_para_o_seu_dataset.com"
+   dataset VariavelDoDataset "nome do dataset":
+      from "path" with
+         target as y = "nomeColuna"
+         features as X = remaining
 ```
 - No código python gerado:
 
 ```
+import numpy as np
 import pandas as pd
 
-data_url = "https://link_para_o_seu_dataset.com"
-df = pd.read_csv(data_url)
+df = pd.read_csv("https://link_para_o_seu_dataset.com")
+df
+
+y = df["nomeColuna"]
+y
+
+X = df.drop("nomeColuna", axis=1)
+X
+
 ```
 
 Exemplos com códigos completos podem ser encontrados no diretório `tests`
@@ -39,7 +50,18 @@ Exemplos com códigos completos podem ser encontrados no diretório `tests`
 
 - Apache Maven 3.6.3 ou superior
 
-## Compilação
+## Compilar e rodar com o script de teste
+
+Criamos um script de teste para rodar os testes presentes no (diretório de testes)[tests/entrada]. 
+
+Para utilizá-lo, basta rodar
+
+      chmod +x runscript.sh
+      ./runscript <nome_do_teste>
+
+Importante! O nome do teste não contem o sufixo .txt.
+
+## Compilação manual
 
 É necessário gerar os arquivos para compilação com
 
@@ -53,7 +75,7 @@ Em sequência, para empacotar o projeto:
 
     mvn compile
     
-## Rodar
+## Rodar manualmente
 
 Para rodar para um par `entrada` e `saida` arbitrário, basta seguir o código abaixo e indicar caminho dos arquivos de entrada e saída
 
